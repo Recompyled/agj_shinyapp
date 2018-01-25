@@ -1,0 +1,265 @@
+---
+title: "ELN Naming Application"
+author: "Alistair Grevis-James <alistair.grevis-james@csl.com.au>"
+date: "25/01/2018"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE}
+#Adding the libraries
+library(shiny)
+library(data.tree)
+```
+
+```{r, echo=FALSE}
+#Creating the Root Node
+D831 <- Node$new("D831")
+```
+
+```{r, echo=FALSE}
+#Creating the Fundamental Technique Nodes
+
+#HPLC
+  FundamentalTechnique <- D831$AddChild("High Pressure Liquid Chromatography")
+  FundamentalTechnique$tag <- 'HPLC'
+    Methodology <- FundamentalTechnique$AddChild("Size Exclusion")
+    Methodology$tag <- 'SE'
+      Analyte <- Methodology$AddChild("Analyte")
+      Analyte$tag <- ("A1")
+
+#Electrophoresis
+  FundamentalTechnique <- D831$AddChild("Electrophoresis")
+  FundamentalTechnique$tag <- 'EP'
+    Methodology <- FundamentalTechnique$AddChild("Size Exclusion")
+    Methodology$tag <- 'SE'
+      Analyte <- Methodology$AddChild("Analyte")
+      Analyte$tag <- ("A1")
+      
+#Electrophoresis
+  FundamentalTechnique <- D831$AddChild("Cell-Based")
+  FundamentalTechnique$tag <- 'CB'
+    Methodology <- FundamentalTechnique$AddChild("Size Exclusion")
+    Methodology$tag <- 'SE'
+      Analyte <- Methodology$AddChild("Analyte")
+      Analyte$tag <- ("A1")
+
+
+```
+
+```{r, echo=TRUE}
+#Printing the Tree
+print(D831)
+print(FundamentalTechnique$tag)
+```
+
+```{r, echo=TRUE}
+#Adding the Projects
+projects = c('', 'CSL689', 'CSL312', 'CSL346')
+```
+
+```{r, echo=TRUE}
+# Create an empty c
+techs = c('')
+for (node in D831$children)
+{ 
+  techs <- c(techs, node$name) 
+}
+
+#Print list to confirm
+print(techs)
+```
+
+
+```{r eruptions, echo=FALSE}
+# Define UI for application that draws a histogram
+ui <- fluidPage(
+   
+   # Application title
+   titlePanel("App V1"),
+   
+   # Sidebar with a slider input for number of bins 
+   sidebarLayout(
+      sidebarPanel(
+         dateInput(
+           inputId = "date",
+           label = "Analysis Date",
+           value = Sys.Date(),
+           format = "yyyy-mm-dd"
+         ),
+         selectInput(inputId = "project",
+                     label = "Project",
+                     choices = projects
+         ),
+         selectInput(inputId = "technique",
+                     label = "Fundamental Technique",
+                     choices = techs
+         ),
+         uiOutput("methodInput"),
+         uiOutput("analyteInput"),
+         uiOutput("stringInput")
+      ),
+      # Show a plot of the generated distribution
+      mainPanel(
+      )
+   )
+)
+
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+   
+  output$methodInput <- renderUI({
+    
+    techName = input$technique
+    techNode = Navigate(root, techName)
+    
+    methods <- c('')
+    for (node in techNode$children)
+    { 
+      methods <- c(methods, node$name) 
+    }
+    
+    selectInput(inputId = "method",
+                label = "Methodology",
+                choices = methods
+    )
+    
+  })
+  
+  output$analyteInput <- renderUI({
+    
+    techName = input$technique
+    techNode = Navigate(root, techName)
+    
+    methodName = input$method
+    methodNode = Navigate(techNode, methodName)
+    
+    analytes <- c('')
+    for (node in methodNode$children)
+    { 
+      analytes <- c(analytes, node$name) 
+    }
+    
+    selectInput(inputId = "analyte",
+                label = "Analyte",
+                choices = analytes
+    )
+    
+  })
+  
+  output$stringInput <- renderUI({
+    
+    dateString = format(input$date, format="%Y%m%d")
+    project = input$project
+    
+    techName = input$technique
+    techNode = Navigate(root, techName)
+    techName = techNode$tag
+    
+    methodName = input$method
+    methodNode = Navigate(techNode, methodName)
+    methodName = methodNode$tag
+    
+    analyteName = input$analyte
+    analyteNode = Navigate(methodNode, analyteName)
+    analyteName = analyteNode$tag
+    
+    textInput(inputId = "string",
+              label = "Experiment Name",
+              value = paste(dateString, project, techName, methodName, analyteName, sep = "_")
+    )
+  })
+
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server)
+```
+
+
+
+print(root)
+
+
+
+This R Markdown document is made interactive using Shiny. Unlike the more traditional workflow of creating static reports, you can now create documents that allow your readers to change the assumptions underlying your analysis and see the results immediately. 
+
+To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
+
+## Inputs and Outputs
+
+You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change.  This demonstrates how a standard R plot can be made interactive by wrapping it in the Shiny `renderPlot` function. The `selectInput` and `sliderInput` functions create the input widgets used to drive the plot.
+
+#```{r eruptions, echo=FALSE}
+#inputPanel(
+#  selectInput("n_breaks", label = "Number of bins:",
+#             choices = c(10, 20, 35, 50), selected = 20),
+#  
+#  sliderInput("bw_adjust", label = "Bandwidth adjustment:",
+#              min = 0.2, max = 2, value = 1, step = 0.2)
+#)
+#
+#renderPlot({
+#  hist(faithful$eruptions, probability = TRUE, breaks = as.numeric(input$n_breaks),
+#       xlab = "Duration (minutes)", main = "Geyser eruption duration")
+#  
+#  dens <- density(faithful$eruptions, adjust = input$bw_adjust)
+#  lines(dens, col = "blue")
+#})
+#```
+
+## Embedded Application
+
+It's also possible to embed an entire Shiny application within an R Markdown document using the `shinyAppDir` function. This example embeds a Shiny application located in another directory:
+
+```{r tabsets, echo=FALSE}
+shinyAppDir(
+  system.file("examples/06_tabsets", package = "shiny"),
+  options = list(
+    width = "100%", height = 550
+  )
+)
+```
+
+Note the use of the `height` parameter to determine how much vertical space the embedded application should occupy.
+
+You can also use the `shinyApp` function to define an application inline rather then in an external directory.
+
+
+In all of R code chunks above the `echo = FALSE` attribute is used. This is to prevent the R code within the chunk from rendering in the document alongside the Shiny components.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
