@@ -30,17 +30,34 @@ D831 <- Node$new("D831")
 #HPLC
   FundamentalTechnique <- D831$AddChild("High Pressure Liquid Chromatography")
   FundamentalTechnique$tag <- 'HPLC'
-    Methodology <- FundamentalTechnique$AddChild("Size Exclusion")
-    Methodology$tag <- 'SE'
-      Analyte <- Methodology$AddChild("Analyte")
+    
+  Methodology <- FundamentalTechnique$AddChild("Size Exclusion")
+  Methodology$tag <- 'SE'
+      Analyte <- Methodology$AddChild("Analyte1")
       Analyte$tag <- ("A1")
+      Analyte <- Methodology$AddChild("Analyte2")
+      Analyte$tag <- ("A2")
+      
+    Methodology <- FundamentalTechnique$AddChild("Cation Exchange")
+    Methodology$tag <- 'CE'
+      Analyte <- Methodology$AddChild("Analyte1")
+      Analyte$tag <- ("A1")
+      Analyte <- Methodology$AddChild("Analyte2")
+      Analyte$tag <- ("A2")
+      
+    Methodology <- FundamentalTechnique$AddChild("Anion Exchange")
+    Methodology$tag <- 'AE'
+      Analyte <- Methodology$AddChild("Analyte1")
+      Analyte$tag <- ("A1")
+      Analyte <- Methodology$AddChild("Analyte2")
+      Analyte$tag <- ("A2")
 
 #Electrophoresis
   FundamentalTechnique <- D831$AddChild("Electrophoresis")
   FundamentalTechnique$tag <- 'EP'
     Methodology <- FundamentalTechnique$AddChild("Size Exclusion")
     Methodology$tag <- 'SE'
-      Analyte <- Methodology$AddChild("Analyte")
+      Analyte <- Methodology$AddChild("Analyte1")
       Analyte$tag <- ("A1")
       
 #Electrophoresis
@@ -48,7 +65,7 @@ D831 <- Node$new("D831")
   FundamentalTechnique$tag <- 'CB'
     Methodology <- FundamentalTechnique$AddChild("Size Exclusion")
     Methodology$tag <- 'SE'
-      Analyte <- Methodology$AddChild("Analyte")
+      Analyte <- Methodology$AddChild("Analyte1")
       Analyte$tag <- ("A1")
 
 
@@ -56,7 +73,7 @@ D831 <- Node$new("D831")
 
 ```{r, echo=FALSE}
 #Printing the Tree
-#print(D831)
+print(D831)
 #print(FundamentalTechnique$tag)
 ```
 
