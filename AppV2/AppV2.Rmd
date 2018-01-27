@@ -261,8 +261,10 @@ server <- function(input, output) {
       analyteName = ''
     }
     
+    project = sub("CSL","",project)
     str = paste(dateString, project, techName, methodName, analyteName, sep = "_")
     str = sub("_+$","",str)
+  
     
     #Need a function to append _ only when selection is made
     textInput(inputId = "string",
