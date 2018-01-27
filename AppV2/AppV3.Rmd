@@ -1,0 +1,361 @@
+---
+title: "ELN Naming Application"
+author: "Alistair Grevis-James <alistair.grevis-james@csl.com.au>"
+date: "25/01/2018"
+output: html_document
+runtime: shiny
+---
+
+This application was created using RStudio and RStudio Shiny Apps. Its purpose is to provide a proof of concept experiment entity naming framework for the Electronic Laboratory Notebook (ELN). There are several assumptions made about the nature of experiment naming, as follows;
+- XYZ
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo=FALSE, warning=FALSE}
+#Adding the libraries
+library(shiny)
+library(data.tree)
+library(rclipboard)
+```
+
+```{r D831 Node, echo=FALSE}
+#Creating the Department 831 Root Node
+D831 <- Node$new("D831")
+```
+
+```{r HPLC Branch, echo=FALSE}
+# Populating the High Pressure Liquid Chromatography branch (excluding MS)
+
+  # Adding the HPLC child node to D831
+  FundamentalTechnique <- D831$AddChild("High Pressure Liquid Chromatography")
+  FundamentalTechnique$tag <- 'HPLC'
+  
+    # Adding the Size Exclusion child node to HPLC parent node
+    Methodology <- FundamentalTechnique$AddChild("Size Exclusion")
+    Methodology$tag <- 'SE'
+        Analyte <- Methodology$AddChild("Analyte1SE")
+        Analyte$tag <- ("A1SE")
+        Analyte <- Methodology$AddChild("Analyte2SE")
+        Analyte$tag <- ("A2SE")
+        
+    # Adding the Cation Exchange child node to HPLC parent node  
+    Methodology <- FundamentalTechnique$AddChild("Cation Exchange")
+    Methodology$tag <- 'CE'
+      Analyte <- Methodology$AddChild("Analyte1CE")
+      Analyte$tag <- ("A1CE")
+      Analyte <- Methodology$AddChild("Analyte2CE")
+      Analyte$tag <- ("A2CE")
+    
+    # Adding the Anion Exchange child node to HPLC parent node   
+    Methodology <- FundamentalTechnique$AddChild("Anion Exchange")
+    Methodology$tag <- 'AE'
+      Analyte <- Methodology$AddChild("Analyte1AE")
+      Analyte$tag <- ("A1AE")
+      Analyte <- Methodology$AddChild("Analyte2AE")
+      Analyte$tag <- ("A2AE")
+    
+    # Adding the Reverse Phase child node to HPLC parent node  
+    Methodology <- FundamentalTechnique$AddChild("Reverse Phase")
+    Methodology$tag <- 'RP'
+      Analyte <- Methodology$AddChild("Analyte1RP")
+      Analyte$tag <- ("A1RP")
+      Analyte <- Methodology$AddChild("Analyte2RP")
+      Analyte$tag <- ("A2RP")
+
+```
+
+
+```{r Electrophoresis Branch, echo=FALSE}
+# Populating the Electrophoresis branch
+
+  # Adding the EP child node to D831
+  FundamentalTechnique <- D831$AddChild("Electrophoresis")
+  FundamentalTechnique$tag <- 'EP'
+  
+    Methodology <- FundamentalTechnique$AddChild("EP Method 1")
+    Methodology$tag <- 'EPMethod1'
+      Analyte <- Methodology$AddChild("Analyte1")
+      Analyte$tag <- ("A1")
+```
+
+
+```{r Cell-based Branch, echo=FALSE}
+# Populating the Cell-Based branch
+
+  # Adding the CB child node to D831
+  FundamentalTechnique <- D831$AddChild("Cell-Based")
+  FundamentalTechnique$tag <- 'CB'
+    
+    # Adding the Reverse Phase child node to Cell-Based parent node  
+    Methodology <- FundamentalTechnique$AddChild("Fluorescence-activated Cell Sorting")
+    Methodology$tag <- 'FACS'
+      Analyte <- Methodology$AddChild("Analyte1FACS")
+      Analyte$tag <- ("A1FACS")
+  
+```
+
+```{r Mass Spectrometry Branch, echo=FALSE}
+# Populating the Mass Spectrometry branch
+
+  # Adding the Mass Spectrometry child node to D831
+  FundamentalTechnique <- D831$AddChild("Mass Spectrometry")
+  FundamentalTechnique$tag <- 'MS'
+ 
+    # Adding the Methodology1 child node to Mass Spectrometry parent node 
+    Methodology <- FundamentalTechnique$AddChild("MS Method 1")
+    Methodology$tag <- 'MSMethod1'
+      Analyte <- Methodology$AddChild("Analyte1 MS Method 1")
+      Analyte$tag <- ("A1MSM1")
+  
+```
+
+```{r, echo=FALSE}
+# 'Potency / Interaction':('Potency / Interaction','PI'),
+```
+
+```{r, echo=FALSE}
+# 'Polymerase Chain Reaction':('Polymerase Chain Reaction','PCR')
+```
+
+```{r, echo=FALSE}
+# 'Crystallography':('Crystallography','CR'),
+```
+
+```{r, echo=FALSE}
+#  'Protein Concentration':('Protein Concentration','ProteinConc')}
+```
+
+```{r, echo=FALSE, results='hide'}
+#Printing the Tree
+print(D831)
+#print(FundamentalTechnique$tag)
+```
+
+```{r, echo=FALSE, results='hide'}
+#Printing the Tree
+plot(D831)
+#print(FundamentalTechnique$tag)
+```
+
+```{r, echo=FALSE}
+#Adding the Projects
+projects = c('', 'CSL689', 'CSL312', 'CSL346')
+```
+
+```{r, echo=FALSE}
+# Create an empty c
+techs = c('')
+for (node in D831$children)
+{ 
+  techs <- c(techs, node$name) 
+}
+
+#Print list to confirm
+#print(techs)
+```
+
+
+```{r echo=FALSE}
+
+# Define UI for application that draws a histogram
+ui <- bootstrapPage(
+   
+   rclipboardSetup(),
+  
+   # Application title
+   titlePanel("Proof of Concept Naming App"),
+   
+   # Sidebar with a slider input for number of bins 
+   sidebarLayout(
+      sidebarPanel(
+         dateInput(
+           inputId = "date",
+           label = "Select Date of Analysis",
+           value = Sys.Date(),
+           format = "yyyy-mm-dd"),
+         
+         selectInput(inputId = "project",
+                     label = "Select CSL Project",
+                     choices = projects),
+         
+         uiOutput("techniqueInput"),
+         uiOutput("methodInput"),
+         uiOutput("analyteInput"),
+         uiOutput("stringInput"),
+         uiOutput("clip"),
+         width = 8),
+      
+      # Show a plot of the generated distribution
+      mainPanel()
+   )
+)
+
+# ADD COMMENT
+server <- function(input, output) {
+   
+  output$techniqueInput <- renderUI({
+     if (input$project != '')
+     {
+       selectInput(inputId = "technique",
+                   label = "Select Fundamental Technique",
+                   choices = techs
+       )
+     }
+      else
+      {
+        selectInput(inputId = "technique",
+                    label = "Select Fundamental Technique",
+                    choices = c('')
+        )
+      }
+  })
+  
+  output$methodInput <- renderUI({
+    
+    techName = input$technique
+    if (techName != '')
+    {
+      techNode = Navigate(D831, techName)
+      
+      methods <- c('')
+      for (node in techNode$children)
+      { 
+        methods <- c(methods, node$name) 
+      }
+      
+      selectInput(inputId = "method",
+                  label = "Methodology",
+                  choices = methods
+      )
+    }
+    else
+    {
+      selectInput(inputId = "method",
+                  label = "Methodology",
+                  choices = c('')
+      )
+    }
+    
+  })
+  
+  output$analyteInput <- renderUI({
+    
+    techName = input$technique
+    if (techName != '')
+    {
+      techNode = Navigate(D831, techName)
+      
+      methodName = input$method
+      
+      if (methodName != '')
+      {
+        methodNode = Navigate(techNode, methodName)
+      
+        analytes <- c('')
+        for (node in methodNode$children)
+        { 
+          analytes <- c(analytes, node$name) 
+        }
+        
+        selectInput(inputId = "analyte",
+                    label = "Analyte",
+                    choices = analytes
+        )
+      }
+      else
+      {
+        selectInput(inputId = "analyte",
+                    label = "Analyte",
+                    choices = c('')
+        )
+      }
+
+    }
+    else
+    {
+      selectInput(inputId = "analyte",
+                  label = "Analyte",
+                  choices = c('')
+      )
+    }
+    
+  })
+  
+  output$stringInput <- renderUI({
+    
+    dateString = format(input$date, format="%Y%m%d")
+    project = input$project
+    
+    techName = input$technique
+    techNode = Navigate(D831, techName)
+    if (techName != '')
+    {
+      techName = techNode$tag
+    }
+    else
+    {
+      techName = ''
+    }
+    
+    methodName = input$method
+    methodNode = Navigate(techNode, methodName)
+    
+    if (methodName != '')
+    {
+      methodName = methodNode$tag
+    }
+    else
+    {
+      methodName = ''
+    }
+
+    analyteName = input$analyte
+    analyteNode = Navigate(methodNode, analyteName)
+    
+    if (analyteName != '')
+    {
+      analyteName = analyteNode$tag
+    }
+    else
+    {
+      analyteName = ''
+    }
+    
+    project = sub("CSL","",project)
+    str = paste(dateString, project, techName, methodName, analyteName, sep = "_")
+    str = sub("_+$","",str)
+  
+    
+    #Need a function to append _ only when selection is made
+    textInput(inputId = "string",
+              label = "Experiment Name",
+              value = str
+    )
+  })
+  
+  output$clip <- renderUI({
+    rclipButton("clipbtn", "Copy to Clipboard", input$string, icon("clipboard"))
+  })
+
+}
+
+# Run the application 
+shinyApp(ui = ui, server = server, options=list(height = 660))
+```
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
