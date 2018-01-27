@@ -81,7 +81,7 @@ D831 <- Node$new("D831")
 # 'Crystallography':('Crystallography','CR'),
 #  'Protein Concentration':('Protein Concentration','ProteinConc')}
       
-      
+    
       
 ```
 
@@ -111,7 +111,6 @@ for (node in D831$children)
 
 
 ```{r, echo=FALSE}
-
 # Define UI for application that draws a histogram
 ui <- bootstrapPage(
    
