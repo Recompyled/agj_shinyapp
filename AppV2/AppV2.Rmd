@@ -32,34 +32,34 @@ D831 <- Node$new("D831")
     
   Methodology <- FundamentalTechnique$AddChild("Size Exclusion")
   Methodology$tag <- 'SE'
-      Analyte <- Methodology$AddChild("Analyte1")
-      Analyte$tag <- ("A1")
-      Analyte <- Methodology$AddChild("Analyte2")
-      Analyte$tag <- ("A2")
+      Analyte <- Methodology$AddChild("Analyte1SE")
+      Analyte$tag <- ("A1SE")
+      Analyte <- Methodology$AddChild("Analyte2SE")
+      Analyte$tag <- ("A2SE")
       
     Methodology <- FundamentalTechnique$AddChild("Cation Exchange")
     Methodology$tag <- 'CE'
-      Analyte <- Methodology$AddChild("Analyte1")
-      Analyte$tag <- ("A1")
-      Analyte <- Methodology$AddChild("Analyte2")
-      Analyte$tag <- ("A2")
+      Analyte <- Methodology$AddChild("Analyte1CE")
+      Analyte$tag <- ("A1CE")
+      Analyte <- Methodology$AddChild("Analyte2CE")
+      Analyte$tag <- ("A2CE")
       
     Methodology <- FundamentalTechnique$AddChild("Anion Exchange")
     Methodology$tag <- 'AE'
-      Analyte <- Methodology$AddChild("Analyte1")
-      Analyte$tag <- ("A1")
-      Analyte <- Methodology$AddChild("Analyte2")
-      Analyte$tag <- ("A2")
+      Analyte <- Methodology$AddChild("Analyte1AE")
+      Analyte$tag <- ("A1AE")
+      Analyte <- Methodology$AddChild("Analyte2AE")
+      Analyte$tag <- ("A2AE")
 
-#Electrophoresis
+# Electrophoresis
   FundamentalTechnique <- D831$AddChild("Electrophoresis")
   FundamentalTechnique$tag <- 'EP'
-    Methodology <- FundamentalTechnique$AddChild("Size Exclusion")
-    Methodology$tag <- 'SE'
+    Methodology <- FundamentalTechnique$AddChild("EP Method 1")
+    Methodology$tag <- 'EPMethod1'
       Analyte <- Methodology$AddChild("Analyte1")
       Analyte$tag <- ("A1")
       
-#Electrophoresis
+# Cell-Based
   FundamentalTechnique <- D831$AddChild("Cell-Based")
   FundamentalTechnique$tag <- 'CB'
     Methodology <- FundamentalTechnique$AddChild("Size Exclusion")
@@ -67,7 +67,22 @@ D831 <- Node$new("D831")
       Analyte <- Methodology$AddChild("Analyte1")
       Analyte$tag <- ("A1")
 
+# Mass Spectrometry
+  FundamentalTechnique <- D831$AddChild("Mass Spectrometry")
+  FundamentalTechnique$tag <- 'MS'
+    Methodology <- FundamentalTechnique$AddChild("MS Method 1")
+    Methodology$tag <- 'MSMethod1'
+      Analyte <- Methodology$AddChild("Analyte1")
+      Analyte$tag <- ("A1")
 
+
+# 'Polymerase Chain Reaction':('Polymerase Chain Reaction','PCR'),
+# 'Potency / Interaction':('Potency / Interaction','PI'),
+# 'Crystallography':('Crystallography','CR'),
+#  'Protein Concentration':('Protein Concentration','ProteinConc')}
+      
+      
+      
 ```
 
 ```{r, echo=FALSE}
@@ -280,7 +295,7 @@ server <- function(input, output) {
 }
 
 # Run the application 
-shinyApp(ui = ui, server = server, options=list(height = 560))
+shinyApp(ui = ui, server = server, options=list(height = 620))
 ```
  
 
