@@ -6,7 +6,6 @@ output: html_document
 runtime: shiny
 ---
 
-# https://clipboardjs.com/
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -99,8 +98,10 @@ for (node in D831$children)
 ```{r, echo=FALSE}
 
 # Define UI for application that draws a histogram
-ui <- fluidPage(
+ui <- bootstrapPage(
    
+   rclipboardSetup(),
+  
    # Application title
    titlePanel("Proof of Concept Naming App"),
    
@@ -117,13 +118,11 @@ ui <- fluidPage(
                      label = "Select CSL Project",
                      choices = projects),
          
-         selectInput(inputId = "technique",
-                     label = "Select Fundamental Technique",
-                     choices = techs),
-         
+         uiOutput("techniqueInput"),
          uiOutput("methodInput"),
          uiOutput("analyteInput"),
          uiOutput("stringInput"),
+         uiOutput("clip"),
          width = 8),
       
       # Show a plot of the generated distribution
@@ -134,6 +133,23 @@ ui <- fluidPage(
 # ADD COMMENT
 server <- function(input, output) {
    
+  output$techniqueInput <- renderUI({
+     if (input$project != '')
+     {
+       selectInput(inputId = "technique",
+                   label = "Select Fundamental Technique",
+                   choices = techs
+       )
+     }
+      else
+      {
+        selectInput(inputId = "technique",
+                    label = "Select Fundamental Technique",
+                    choices = c('')
+        )
+      }
+  })
+  
   output$methodInput <- renderUI({
     
     techName = input$technique
@@ -254,12 +270,17 @@ server <- function(input, output) {
               value = str
     )
   })
+  
+  output$clip <- renderUI({
+    rclipButton("clipbtn", "Copy to Clipboard", input$string, icon("clipboard"))
+  })
 
 }
 
 # Run the application 
 shinyApp(ui = ui, server = server, options=list(height = 560))
 ```
+ 
 
 
 
