@@ -6,6 +6,8 @@ output: html_document
 runtime: shiny
 ---
 
+Add text to show Chris.
+
 This application was created using RStudio and RStudio Shiny Apps. Its purpose is to provide a proof of concept experiment entity naming framework for the Electronic Laboratory Notebook (ELN). There are several assumptions made about the nature of experiment naming, as follows;
 - XYZ
 
@@ -155,7 +157,6 @@ for (node in D831$children)
 #Print list to confirm
 #print(techs)
 ```
-
 
 ```{r echo=FALSE}
 
